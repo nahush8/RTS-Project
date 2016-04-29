@@ -138,6 +138,51 @@
 #include "stream/stream_dvd.h"
 #endif
 
+
+/* ChronOS stuff*/
+#define RT_ENABLE 1
+
+// If real time is enabled -->
+#if RT_ENABLE
+
+
+#include <chronos/chronos.h>
+#include <time.h>
+
+#define SCHED_ALGORITHM SCHED_RT_EDF
+#define SCHED_FLAG 0
+//Since we are not using any global schedulers such as GFIFO or GRMA 
+#define SCHED_PRIORITY -1 
+#define SCHED_CPUS 5
+
+#define MAIN_PRIORITY 98
+#define TASK_CLEANUP  92
+#define TASK_RUN_PRIORITY 90
+
+#endif 
+
+#define CHRONOS_PERIOD      50000 //us
+#define CHRONOS_DEADLINE    50000 //us
+
+//End of real_time enable
+
+//Function to find the deadline of the given frame
+
+static void computeDeadline(int task, long period, struct timespec *start, struct timespec *deadline){
+
+    unsigned long long nanoSec, carry;
+    unsigned long offset = period;
+
+    nanoSec = start->tv_nsec + offset * 1000;
+    carry = nsec / 1000000000;
+
+    deadline->tv_nsec = nanoSec % 1000000000;
+    deadline->tv_sec = start->tv_sec + carry;
+
+
+}
+
+
 int slave_mode;
 int player_idle_mode;
 int quiet;
@@ -3712,6 +3757,18 @@ goto_enable_cache:
         }
 #endif
 
+
+#if RT_ENABLE
+
+    if (set_scheduler(SCHED_ALGORITHM | SCHED_FLAG, SCHED_PRIORITY, SCHED_CPUS)) {
+    printf("Selection of RT scheduler failed.\n");
+    return 0;
+    }
+
+#endif
+
+        // Nahush and Krati : Start of the main while loop
+
         while (!mpctx->eof) {
             float aq_sleep_time = 0;
 
@@ -4004,6 +4061,8 @@ goto_enable_cache:
             }
 #endif /* CONFIG_GUI */
         } // while(!mpctx->eof)
+
+        // Nahush and Krati : This is the end of the main while loop
 
         mp_msg(MSGT_GLOBAL, MSGL_V, "EOF code: %d  \n", mpctx->eof);
 

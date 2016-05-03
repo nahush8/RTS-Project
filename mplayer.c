@@ -138,48 +138,41 @@
 #include "stream/stream_dvd.h"
 #endif
 
+//----------------------------ChronOS declarations---------------------------
+#define ENABLE_CHRONOS          1
 
-/* ChronOS stuff*/
-#define RT_ENABLE 1
+int chronos_frames, chronos_fps;
 
-// If real time is enabled -->
-#if RT_ENABLE
-
-
+#if ENABLE_CHRONOS
 #include <chronos/chronos.h>
 #include <time.h>
 
-#define SCHED_ALGORITHM SCHED_RT_EDF
-#define SCHED_FLAG 0
-//Since we are not using any global schedulers such as GFIFO or GRMA 
-#define SCHED_PRIORITY -1 
-#define SCHED_CPUS 5
+#define SET_SCHED_ALGO      SCHED_RT_EDF
+#define SET_SCHED_FLAG      0
+#define SET_SCHED_PRIO      ((SET_SCHED_ALGO & SCHED_GLOBAL_MASK) ? TASK_RUN_PRIO : -1)
+#define SET_SCHED_PROC      5
 
-#define MAIN_PRIORITY 98
-#define TASK_CLEANUP  92
-#define TASK_RUN_PRIORITY 90
+#define MASK_ZERO(mask) (mask) = 0
+#define MASK_SET(mask, cpu) (mask) |= (unsigned long) pow(2, cpu);
 
-#endif 
+#define MAIN_PRIO       98
+#define TASK_CLEANUP_PRIO   92
+#define TASK_RUN_PRIO       90
+#endif
 
 #define CHRONOS_PERIOD      50000 //us
 #define CHRONOS_DEADLINE    50000 //us
 
-//End of real_time enable
-
-//Function to find the deadline of the given frame
-
-static void computeDeadline(int task, long period, struct timespec *start, struct timespec *deadline){
-
-    unsigned long long nanoSec, carry;
+static void find_job_deadline(int job, long period, struct timespec *start_time, struct timespec *deadline)
+{
+    unsigned long long nsec, carry;
     unsigned long offset = period;
 
-    nanoSec = start->tv_nsec + offset * 1000;
+    nsec = start_time->tv_nsec + offset * 1000;
     carry = nsec / 1000000000;
 
-    deadline->tv_nsec = nanoSec % 1000000000;
-    deadline->tv_sec = start->tv_sec + carry;
-
-
+    deadline->tv_nsec = nsec % 1000000000;
+    deadline->tv_sec = start_time->tv_sec + carry;
 }
 
 
@@ -3757,19 +3750,68 @@ goto_enable_cache:
         }
 #endif
 
+int frame = -1;
 
-#if RT_ENABLE
+struct timeval start;
+struct timespec deadline, period, start_time;
 
-    if (set_scheduler(SCHED_ALGORITHM | SCHED_FLAG, SCHED_PRIORITY, SCHED_CPUS)) {
-    printf("Selection of RT scheduler failed.\n");
+struct timeval end_time, waittime;
+#if ENABLE_CHRONOS
+#if 0
+struct sched_param param;
+unsigned long main_mask = 0;
+
+param.sched_priority = MAIN_PRIO;
+if (sched_setscheduler(0, SCHED_FIFO, &param) == -1) {
+    printf("sched_setscheduler() failed.\n");
     return 0;
-    }
-
+}
 #endif
 
+if (set_scheduler(SET_SCHED_ALGO | SET_SCHED_FLAG, SET_SCHED_PRIO, SET_SCHED_PROC)) {
+    printf("Selection of RT scheduler failed.\n");
+    return 0;
+}
+#endif
+
+period.tv_sec = 0;
+period.tv_nsec = CHRONOS_PERIOD * 1000;
+
+chronos_frames = 0;
+
+// Declare and initialize variables
+unsigned long long diff;
+
+#define CHRONOS_MAX_TIMESTAMPS 256
+
+int i_chr;
+unsigned long long timestamps[CHRONOS_MAX_TIMESTAMPS];
+
+for (i_chr = 0; i_chr < CHRONOS_MAX_TIMESTAMPS; i_chr++)
+    timestamps[i_chr] = 0;
+
+    clock_gettime(CLOCK_REALTIME, &start_time);
+
+printf("Start video\n");
         // Nahush and Krati : Start of the main while loop
 
         while (!mpctx->eof) {
+
+                frame++;
+
+                gettimeofday(&start, NULL);
+
+            find_job_deadline(frame, CHRONOS_PERIOD, &start, &deadline);
+
+            #if 0
+                    printf("%d - start: %ld, %.6ld deadline: %ld %.9ld\n", getpid(), start.tv_sec, start.tv_usec, deadline.tv_sec, deadline.tv_nsec);
+            #endif
+
+            #if ENABLE_CHRONOS
+                    begin_rtseg_selfbasic(90, &deadline, &period);
+            #endif
+
+
             float aq_sleep_time = 0;
 
             if (dvd_last_chapter > 0) {
@@ -4060,7 +4102,60 @@ goto_enable_cache:
 #endif
             }
 #endif /* CONFIG_GUI */
+            //----------------------------END RT SEGMENT--------------------------------
+#if ENABLE_CHRONOS
+    end_rtseg_self(TASK_CLEANUP_PRIO);
+#endif
+
+    gettimeofday(&end_time, NULL);
+
+    int n_drop = 0;
+    unsigned long long now = (end_time.tv_sec * 1000000) + end_time.tv_usec;
+
+    i_chr = 0;
+
+    while (timestamps[i_chr] != 0) i_chr++;
+
+    timestamps[i_chr] = now;
+
+    for (i_chr = 0; i_chr < CHRONOS_MAX_TIMESTAMPS; i_chr++) {
+        if (timestamps[i_chr] != 0  && now - timestamps[i_chr] > 1000000) {
+            timestamps[i_chr] = 0;
+            n_drop++;
+        }
+    }
+
+    if (n_drop != 0) {
+        for (i_chr = 0; i_chr < CHRONOS_MAX_TIMESTAMPS - n_drop; i_chr++)
+            timestamps[i_chr] = timestamps[i_chr + n_drop];
+    }
+
+    chronos_fps = 0;
+
+    for (i_chr = 0; i_chr < CHRONOS_MAX_TIMESTAMPS && timestamps[i_chr] != 0; i_chr++)
+        chronos_fps++;
+
+        diff = (end_time.tv_sec * 1000000) + end_time.tv_usec;
+        diff -= (start.tv_sec * 1000000) + start.tv_usec;
+
+        waittime.tv_usec = CHRONOS_PERIOD - diff;
+
+#if 0
+    printf("end %ld %ld (%lld)\n", end_time.tv_sec, end_time.tv_usec, diff);
+    printf("frame %d: %lld us %d fps %ld waittime %d\n", chronos_frames, diff, 0, waittime.tv_usec, waittime.tv_usec <= 0);
+#endif
+
+    if (waittime.tv_usec > 0)
+        usleep(waittime.tv_usec);
+
+    chronos_frames++;
+
+
+
+
         } // while(!mpctx->eof)
+
+
 
         // Nahush and Krati : This is the end of the main while loop
 

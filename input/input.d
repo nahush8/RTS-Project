@@ -48,7 +48,7 @@ input/input.o: input/input.c /usr/include/stdc-predef.h config.h \
  input/input.h m_config.h input/mouse.h mp_fifo.h osdep/getch2.h \
  osdep/keycodes.h osdep/timer.h ffmpeg/libavutil/avstring.h \
  ffmpeg/libavutil/attributes.h mp_msg.h config.h help_mp.h m_option.h \
- path.h input/joystick.h input/ar.h
+ path.h input/joystick.h input/lirc.h input/ar.h
 
 /usr/include/stdc-predef.h:
 
@@ -207,5 +207,7 @@ m_option.h:
 path.h:
 
 input/joystick.h:
+
+input/lirc.h:
 
 input/ar.h:

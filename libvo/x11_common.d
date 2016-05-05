@@ -71,7 +71,10 @@ libvo/x11_common.o: libvo/x11_common.c /usr/include/stdc-predef.h \
  libvo/geometry.h help_mp.h osdep/timer.h /usr/include/X11/Xmd.h \
  /usr/include/X11/Xatom.h /usr/include/X11/extensions/scrnsaver.h \
  /usr/include/X11/extensions/saver.h /usr/include/X11/extensions/dpms.h \
- /usr/include/X11/extensions/dpmsconst.h /usr/include/X11/XF86keysym.h \
+ /usr/include/X11/extensions/dpmsconst.h \
+ /usr/include/X11/extensions/Xinerama.h \
+ /usr/include/X11/extensions/xf86vmode.h \
+ /usr/include/X11/extensions/xf86vm.h /usr/include/X11/XF86keysym.h \
  /usr/include/X11/extensions/Xv.h /usr/include/X11/extensions/Xvlib.h \
  /usr/include/X11/extensions/XShm.h /usr/include/X11/extensions/shm.h \
  subopt-helper.h input/input.h m_config.h input/mouse.h osdep/keycodes.h \
@@ -304,6 +307,12 @@ osdep/timer.h:
 /usr/include/X11/extensions/dpms.h:
 
 /usr/include/X11/extensions/dpmsconst.h:
+
+/usr/include/X11/extensions/Xinerama.h:
+
+/usr/include/X11/extensions/xf86vmode.h:
+
+/usr/include/X11/extensions/xf86vm.h:
 
 /usr/include/X11/XF86keysym.h:
 

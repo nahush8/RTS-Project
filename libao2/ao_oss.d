@@ -57,8 +57,8 @@ libao2/ao_oss.o: libao2/ao_oss.c /usr/include/stdc-predef.h \
  mixer.h libaf/af.h libaf/af_format.h libaf/control.h cpudetect.h \
  libao2/audio_out.h help_mp.h \
  /usr/include/x86_64-linux-gnu/sys/soundcard.h \
- /usr/include/linux/soundcard.h /usr/include/linux/patchkey.h \
- libaf/af_format.h libao2/audio_out.h libao2/audio_out_internal.h
+ /usr/include/linux/soundcard.h libaf/af_format.h libao2/audio_out.h \
+ libao2/audio_out_internal.h
 
 /usr/include/stdc-predef.h:
 
@@ -225,8 +225,6 @@ help_mp.h:
 /usr/include/x86_64-linux-gnu/sys/soundcard.h:
 
 /usr/include/linux/soundcard.h:
-
-/usr/include/linux/patchkey.h:
 
 libaf/af_format.h:
 

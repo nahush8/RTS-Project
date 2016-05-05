@@ -51,8 +51,9 @@ libvo/vo_xvidix.o: libvo/vo_xvidix.c /usr/include/stdc-predef.h \
  libvo/geometry.h sub/osd.h /usr/include/X11/Xlib.h /usr/include/X11/X.h \
  /usr/include/X11/Xfuncproto.h /usr/include/X11/Xosdefs.h \
  /usr/include/X11/Xutil.h /usr/include/X11/keysym.h \
- /usr/include/X11/keysymdef.h libvo/x11_common.h libvo/aspect.h mp_msg.h \
- config.h libvo/vosub_vidix.h vidix/vidix.h
+ /usr/include/X11/keysymdef.h /usr/include/X11/extensions/Xinerama.h \
+ libvo/x11_common.h libvo/aspect.h mp_msg.h config.h libvo/vosub_vidix.h \
+ vidix/vidix.h
 
 /usr/include/stdc-predef.h:
 
@@ -209,6 +210,8 @@ sub/osd.h:
 /usr/include/X11/keysym.h:
 
 /usr/include/X11/keysymdef.h:
+
+/usr/include/X11/extensions/Xinerama.h:
 
 libvo/x11_common.h:
 

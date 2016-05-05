@@ -172,13 +172,19 @@ mplayer.o: mplayer.c /usr/include/stdc-predef.h config.h \
  libdvdread4/dvdread/dvd_reader.h libdvdread4/dvdread/ifo_types.h \
  libdvdread4/dvdread/ifo_read.h libdvdread4/dvdread/ifo_types.h \
  libdvdread4/dvdread/nav_read.h libdvdread4/dvdread/nav_types.h \
- cfg-mplayer.h cfg-common.h libmpcodecs/ad.h libmpcodecs/vf_scale.h \
- libmpdemux/demux_audio.h libmpdemux/demux_mpg.h libmpdemux/demux_ts.h \
- libmpdemux/demux_viv.h libmpdemux/mf.h sub/unrar_exec.h osdep/priority.h \
- stream/cdd.h stream/network.h stream/pvr.h stream/tv.h stream/tcp.h \
- stream/udp.h stream/url.h ffmpeg/libpostproc/postprocess.h \
- ffmpeg/libavutil/avutil.h libaf/af.h input/lirc.h libvo/aspect.h \
- libvo/geometry.h libvo/vo_dxr2.h libvo/vo_fbdev.h libvo/vo_zr.h
+ /usr/local/include/chronos/chronos.h /usr/include/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/sched.h \
+ /usr/include/x86_64-linux-gnu/sys/syscall.h \
+ /usr/include/x86_64-linux-gnu/asm/unistd.h \
+ /usr/include/x86_64-linux-gnu/asm/unistd_64.h \
+ /usr/include/x86_64-linux-gnu/bits/syscall.h cfg-mplayer.h cfg-common.h \
+ libmpcodecs/ad.h libmpcodecs/vf_scale.h libmpdemux/demux_audio.h \
+ libmpdemux/demux_mpg.h libmpdemux/demux_ts.h libmpdemux/demux_viv.h \
+ libmpdemux/mf.h sub/unrar_exec.h osdep/priority.h stream/cdd.h \
+ stream/network.h stream/pvr.h stream/tv.h stream/tcp.h stream/udp.h \
+ stream/url.h ffmpeg/libpostproc/postprocess.h ffmpeg/libavutil/avutil.h \
+ libaf/af.h input/lirc.h libvo/aspect.h libvo/geometry.h libvo/vo_dxr2.h \
+ libvo/vo_fbdev.h libvo/vo_zr.h
 
 /usr/include/stdc-predef.h:
 
@@ -791,6 +797,20 @@ libdvdread4/dvdread/ifo_types.h:
 libdvdread4/dvdread/nav_read.h:
 
 libdvdread4/dvdread/nav_types.h:
+
+/usr/local/include/chronos/chronos.h:
+
+/usr/include/sched.h:
+
+/usr/include/x86_64-linux-gnu/bits/sched.h:
+
+/usr/include/x86_64-linux-gnu/sys/syscall.h:
+
+/usr/include/x86_64-linux-gnu/asm/unistd.h:
+
+/usr/include/x86_64-linux-gnu/asm/unistd_64.h:
+
+/usr/include/x86_64-linux-gnu/bits/syscall.h:
 
 cfg-mplayer.h:
 

@@ -49,8 +49,8 @@ stream/ai_oss.o: stream/ai_oss.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/ioctl-types.h \
  /usr/include/x86_64-linux-gnu/sys/ttydefaults.h \
  /usr/include/x86_64-linux-gnu/sys/soundcard.h \
- /usr/include/linux/soundcard.h /usr/include/linux/patchkey.h \
- stream/audio_in.h /usr/include/alsa/asoundlib.h /usr/include/unistd.h \
+ /usr/include/linux/soundcard.h stream/audio_in.h \
+ /usr/include/alsa/asoundlib.h /usr/include/unistd.h \
  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
@@ -199,8 +199,6 @@ config.h:
 /usr/include/x86_64-linux-gnu/sys/soundcard.h:
 
 /usr/include/linux/soundcard.h:
-
-/usr/include/linux/patchkey.h:
 
 stream/audio_in.h:
 
